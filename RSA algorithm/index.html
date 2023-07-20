@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RSA Shefri</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <header>
+        <h1>RSA Shefri</h1>
+    </header>
+
+    <main>
+        <form>
+            <label for="message">Xabar:</label>
+            <textarea id="message" name="message" rows="3" required></textarea>
+
+            <label for="public-key">Ochiq kalit:</label>
+            <input type="text" id="public-key" name="public-key" required>
+
+            <button id="generate" type="submit">Shefrlash</button>
+        </form>
+
+        <div id="encrypted-message"></div>
+        <div id="decrypted-message"></div>
+    </main>
+
+    <footer>
+        <p>Tayyorlab beruvchi: Qobulov Asror</p>
+    </footer>
+
+	<script type="text/javascript">
+
+		const generate = document.getElementById("generate");
+		const message = document.getElementById("message").value;
+		// const publicKey = document.getElementById("public-key").value;
+
+		generate.addEventListener("click", async (e)=>{
+			e.preventDefault();
+			if(message.length < 1 ) return;
+			const keys = await generateKeys();
+			const encryptedMessage = await encrypt(message, keys.publicKey);
+			const decryptedMessage = await decrypt(encryptedMessage, keys.privateKey);
+
+			// alert(encryptedMessage)
+			document.getElementById("encrypted-message").innerText = encryptedMessage;
+			document.getElementById("decrypted-message").innerText = decryptedMessage;
+
+			// console.log("Shifrlangan Xabar:", encryptedMessage);
+			// console.log("Yechilgan Xabar:", decryptedMessage);
+
+		})
+
+		// Tub sonlarni tekshiruvchi yordamli funksiya
+		function isPrime(num) {
+		  for (let i = 2, sqrt = Math.sqrt(num); i <= sqrt; i++) {
+		    if (num % i === 0) return false;
+		  }
+		  return num > 1;
+		}
+
+		// Ikkita katta tub sonni tanlash
+		function selectPrime() {
+		  let p, q;
+		  do {
+		    p = Math.floor(Math.random() * 100) + 1; // 1 dan 100 gacha tasodifiy son tanlashingiz mumkin
+		  } while (!isPrime(p));
+
+		  do {
+		    q = Math.floor(Math.random() * 100) + 1; // 1 dan 100 gacha tasodifiy son tanlashingiz mumkin
+		  } while (!isPrime(q));
+
+		  return { p, q };
+		}
+
+		// Ikkita tub sondan kalit yaratish
+		function generateKeys() {
+		  const { p, q } = selectPrime();
+		  const n = p * q; // modul
+		  const phi = (p - 1) * (q - 1); // Euler funktsiyasi
+
+		  let e; // ochiq kalit
+		  do {
+		    e = Math.floor(Math.random() * (phi - 2)) + 2; // 1 dan phi - 1 gacha tasodifiy son tanlashingiz mumkin
+		  } while (phi % e === 0 || !isPrime(e));
+
+		  let d; // maxsus kalit
+		  for (let i = 1; i < phi; i++) {
+		    if ((i * e) % phi === 1) {
+		      d = i;
+		      break;
+		    }
+		  }
+
+		  return {
+		    publicKey: { e, n },
+		    privateKey: { d, n }
+		  };
+		}
+
+		// Ma'lumotni shifrlash
+		function encrypt(message, publicKey) {
+		  const { e, n } = publicKey;
+		  const encrypted = [];
+
+		  for (let i = 0; i < message.length; i++) {
+		    const charCode = message.charCodeAt(i);
+		    const encryptedCharCode = BigInt(charCode) ** BigInt(e) % BigInt(n);
+		    encrypted.push(encryptedCharCode);
+		  }
+
+		  return encrypted;
+		}
+
+		// Shifrdagi ma'lumotni yechish
+		function decrypt(encrypted, privateKey) {
+		  const { d, n } = privateKey;
+		  let decrypted = "";
+
+		  for (let i = 0; i < encrypted.length; i++) {
+		    const encryptedCharCode = encrypted[i];
+		    const decryptedCharCode = BigInt(encryptedCharCode) ** BigInt(d) % BigInt(n);
+		    decrypted += String.fromCharCode(Number(decryptedCharCode));
+		  }
+
+		  return decrypted;
+		}
+
+
+	</script>
+</body>
+</html>
