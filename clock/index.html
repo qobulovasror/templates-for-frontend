@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Clock</title>
+    <link rel="stylesheet" href="time.css" />
+  </head>
+  <body>
+    <div id="mun-sun" class="light">
+      <div class="card column">
+          <h4 class="t-center" id="today"></h4>
+        <div class="time">
+          <div id="tayanch"></div>
+          <div id="hour"></div>
+          <div id="minute"></div>
+          <div id="secund"></div>
+          <div class="hour-number">
+            <div class="unikki">12</div>
+            <div class="uch">3</div>
+            <div class="olti">6</div>
+            <div class="tuqqiz">9</div>
+          </div>
+        </div>
+        <div class="time-disp column">
+          <div class="row display">
+            <span id="hourDisp">00</span>
+            <h1>:</h1>
+            <span id="minuteDisp">00</span>
+            <h1>:</h1>
+            <span id="secundDisp">00</span>
+          </div>
+          <div class="setting" id="setting-Btn">
+            <div class="moon">
+                <div class="sunbtn"></div>
+              </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <script>
+      const today = document.getElementById('today').innerText = new Date().toLocaleDateString();
+      let hour = document.querySelector("#hour");
+      let minute = document.querySelector("#minute");
+      let secund = document.querySelector("#secund");
+
+      let hourDisp = document.querySelector("#hourDisp");
+      let minuteDisp = document.querySelector("#minuteDisp");
+      let secundDisp = document.querySelector("#secundDisp");
+
+      setInterval(function () {
+        let secuntNumber = new Date().getUTCSeconds();
+        let minuteNumber = new Date().getUTCMinutes();
+        let hourNumber = new Date().getHours();
+        secund.style.transform = `translate(-50%,-100%) rotate(${secuntNumber*6}deg)`;
+        minute.style.transform = `translate(-50%,-100%) rotate(${minuteNumber*6}deg)`;
+        hour.style.transform = `translate(-50%,-100%) rotate(${hourNumber*30}deg)`;
+
+        if(secuntNumber < 10 )
+            secundDisp.innerText =  "0"+ secuntNumber;
+        else
+            secundDisp.innerText =  secuntNumber;
+        if(minuteNumber < 10)
+            minuteDisp.innerText = "0" + minuteNumber;
+        else
+            minuteDisp.innerText = minuteNumber;
+        hourDisp.innerText = hourNumber;
+
+        secuntNumber = null;
+        minuteNumber = null;
+        hourNumber = null;
+      }, 1000);
+      
+      
+      
+      let settingBtn = document.getElementById("setting-Btn");
+      settingBtn.addEventListener("click", function(){
+          let moon = document.querySelector(".moon");
+          let sunbtn = document.querySelector(".sunbtn");
+          let munSun = document.querySelector("#mun-sun");
+          if (munSun.className == "light") {
+            munSun.className = "dark";
+            sunbtn.style.transform = "translateX(18px)";
+          } else {
+            munSun.className = "light";
+            sunbtn.style.transform = "translateX(0px)";
+          }
+      });
+    </script>
+  </body>
+</html>
